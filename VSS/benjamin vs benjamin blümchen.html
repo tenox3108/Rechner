@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe mit Hintergrundbild</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url('https://b2729162.smushcdn.com/2729162/wp-content/uploads/2021/11/Stupid-and-funny-background-for-meetings-zoom-min.png?lossy=1&strip=1&webp=1'); /* Hintergrundbild URL */
+            background-size: cover;
+            background-position: center;
+            color: white;
+        }
+        h1 {
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 5px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 123, 255, 0.8);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .cell:hover {
+            background-color: rgba(0, 105, 217, 0.8);
+        }
+        .message {
+            margin-top: 20px;
+            font-size: 24px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: rgba(40, 167, 69, 0.9);
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: rgba(32, 136, 51, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <h1>Benjamin VS Benjamin Blümchen</h1>
+    <div class="board" id="board"></div>
+    <button onclick="resetGame()">Neues Spiel</button>
+    <p class="message" id="message"></p>
+
+    <script>
+        let currentPlayer = 'X';
+        const board = ['', '', '', '', '', '', '', '', ''];
+        const boardElement = document.getElementById('board');
+        const messageElement = document.getElementById('message');
+
+        // URLs der Bilder für X und O
+        const xImage = 'https://i.scdn.co/image/ab6761610000e5eb99ce0c46ce1710d30cea8179'; // Bild für X
+        const oImage = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9wns0HONilPzBmyYM2NyLaElgF5U-OM4Yog&s'; // Bild für O
+
+        function createBoard() {
+            boardElement.innerHTML = '';
+            board.forEach((cell, index) => {
+                const cellElement = document.createElement('div');
+                cellElement.classList.add('cell');
+                if (cell === 'X') {
+                    const img = document.createElement('img');
+                    img.src = xImage;
+                    img.style.width = '80%'; // Bildgröße anpassen
+                    img.style.height = '80%';
+                    cellElement.appendChild(img);
+                } else if (cell === 'O') {
+                    const img = document.createElement('img');
+                    img.src = oImage;
+                    img.style.width = '80%';
+                    img.style.height = '80%';
+                    cellElement.appendChild(img);
+                }
+                cellElement.addEventListener('click', () => handleCellClick(index));
+                boardElement.appendChild(cellElement);
+            });
+        }
+
+        function handleCellClick(index) {
+            if (board[index] === '' && !checkWinner()) {
+                board[index] = currentPlayer;
+                if (checkWinner()) {
+                    messageElement.textContent = `${currentPlayer} gewinnt!`;
+                } else if (board.every(cell => cell)) {
+                    messageElement.textContent = 'Unentschieden!';
+                } else {
+                    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                }
+                createBoard();
+            }
+        }
+
+        function checkWinner() {
+            const winningCombinations = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6]
+            ];
+            return winningCombinations.some(combination => {
+                const [a, b, c] = combination;
+                return board[a] && board[a] === board[b] && board[a] === board[c];
+            });
+        }
+
+        function resetGame() {
+            board.fill('');
+            currentPlayer = 'X';
+            messageElement.textContent = '';
+            createBoard();
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>
